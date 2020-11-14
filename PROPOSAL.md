@@ -28,7 +28,7 @@ The system will also facilitate different users from day to day.
 
 ## Tools, Technologies and Equipment
 
-Physical devices - Raspberry Pi, SenseHat, TP-Link Smart Plugs & Bulb
+Physical devices - Raspberry Pi, SenseHat, TP-Link Smart Plugs & Bulb, Audio interface connected to speakers, Amazon Alexa
 
 The solution will involve a Python webservice running on the Raspberry Pi. When the script is executed, Bluetooth discovery
 will be used to identify which user is logging in. This will derive the configuration needed for the other functions of the 
