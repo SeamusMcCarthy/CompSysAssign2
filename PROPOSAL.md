@@ -24,7 +24,7 @@ family members know that you are in a situation where disturbances might be disr
 colour changing light can be placed outside the office and controlled wirelessly so that, for example, a red light indicates 
 that you are on a call or a green light suggests that you're available. 
 
-The system will also facilitate different users from day to day.
+The system will also facilitate situations where it might be different users using the system from day to day.
 
 ## Tools, Technologies and Equipment
 
