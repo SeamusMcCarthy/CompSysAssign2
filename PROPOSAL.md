@@ -14,7 +14,7 @@ The typical home office most likely won't benefit from air-conditioning and clim
 in your typical office environment. SHOM provides the user with a means to respond to temperature and humidity 
 readings by remotely controlling a heater and dehumidifier to maintain safe levels.
 
-The recorded working hours and breaks will be presented to the user in graph form and allow them to identify if home
+The recorded working hours and breaks will be presented to the user in graph/table formats and allow them to identify if home
 life is interfering with work responsibilities or whether work is intruding on home life. Ultimately, it may identify 
 unnoticed "work from home" patterns that will allow the user to more effectively plan their schedule around situations 
 that would not occur in an actual office environment i.e. the 30 mins each day when the kids arrive home from school.
