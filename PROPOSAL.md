@@ -39,12 +39,12 @@ When a HTTP request is received, the webservice renders a HTML page, which utili
 and will display the various environment levels, working time details and controls. The controls will allow the user to switch
 on/off certain devices and start/stop the timers around working hours and break lengths.
 
-In order to communicate with the SmartBulb, I installed the python-kasa package which makes use of the proprietary 
-TP-Link Smart Home protocol. As python-kasa utilises asyncio, I will have to change the webservice from using Flask & CORS
-to Quart & quart_cors. This approach had initially been prototyped with the Smartplugs and worked smoothly so I had intended 
-to use the same approach there but due to an enforced firmware upgrade from TP Link (in the week the project proposal was due), 
-the required ports are no longer visible to python-kasa. I have found a workaround where I can use the espeak package to 
-output voice commandsso that an Echo Dot can still control the plugs via an Alexa Skill. Whilst this is not as clean a solution 
+In order to communicate with the TP-Link Smart devices, I had installed the python-kasa package which makes use of the proprietary 
+TP-Link Smart Home protocol. As python-kasa utilises asyncio, I would have to change the webservice from using Flask & CORS
+to Quart & quart_cors. This approach had initially been prototyped with the SmartPlugs and worked smoothly and has since been proven to 
+work with the SmartBulb. However, due to an enforced SmartPlug firmware upgrade from TP Link (in the week the project proposal was due), 
+the required ports (TCP 9999) are no longer visible to python-kasa. I have found a workaround where I can use the espeak package to 
+output voice commands so that an Echo Dot can still control the plugs via an Alexa Skill. Whilst this is not as clean a solution 
 as using python-kasa to directly (and silently) control the TP-Link SmartPlugs, it will allow me a means of retaining the same 
 overall functionality should a python-kasa solution not present itself before the project deadline.
 
