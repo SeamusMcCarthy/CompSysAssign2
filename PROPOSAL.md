@@ -43,10 +43,8 @@ In order to communicate with the TP-Link Smart devices, I had installed the pyth
 TP-Link Smart Home protocol. As python-kasa utilises asyncio, I would have to change the webservice from using Flask & CORS
 to Quart & quart_cors. This approach had initially been prototyped with the SmartPlugs and worked smoothly and has since been proven to 
 work with the SmartBulb. However, due to an enforced SmartPlug firmware upgrade from TP Link (in the week the project proposal was due), 
-the required ports (TCP 9999) are no longer visible to python-kasa. I have found a workaround where I can use the espeak package to 
-output voice commands so that an Echo Dot can still control the plugs via an Alexa Skill. Whilst this is not as clean a solution 
-as using python-kasa to directly (and silently) control the TP-Link SmartPlugs, it will allow me a means of retaining the same 
-overall functionality should a python-kasa solution not present itself before the project deadline.
+the required ports (TCP 9999) are no longer visible to python-kasa. I have found a workaround where I can post IFTTT maker requests that
+will control the devices instead. It's not as tidy in that I need new triggers for on/off on each device but it will give me full control.
 
 The working day start/end times and total scheduled/unscheduled break lengths will be written to the user's Thingspeak channel 
 at the end of the working day and I have created MATLAB Visualisations so that the start/end times are contained within a 
