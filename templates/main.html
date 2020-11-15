@@ -251,6 +251,26 @@
       </div>
       </br>
       <div class="row">
+         <div class="col-sm">
+            <table class="table table-striped">
+            <tr>
+            <th>Scheduled</th>
+            </tr>
+            <tr>
+            <th>Start Time</th>
+            <th>End Time</th>
+            </tr>
+       
+            {% for time in times %}
+            <tr>
+            <td>{{ times[time].start }}</td>
+            <td>{{ times[time].end }} </td>
+            </tr>
+            {% endfor %}
+            </table>
+      </div>
+      </div>
+      <div class="row">
          <div class="col-sm"><iframe width='500' height='300' style='border: 1px solid' src="{{ chart1 }}"></iframe></div>
          <div class="col-sm"><iframe width='500' height='300' style='border: 1px solid' src="{{ chart2 }}"></iframe></div>
       </div>
