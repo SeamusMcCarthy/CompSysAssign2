@@ -28,23 +28,25 @@ The system will also facilitate situations where it might be different users usi
 
 ## Tools, Technologies and Equipment
 
-Physical devices - Raspberry Pi, SenseHat, TP-Link Smart Plugs & Bulb, Audio interface connected to speakers, Amazon Echo Dot
+Physical devices - Raspberry Pi, SenseHat, TP-Link Smart Plugs & Bulb
 
 The solution will involve a Python webservice running on the Raspberry Pi. When the script is first executed, Bluetooth discovery
-will be used to identify which user is logging in. This will derive the configuration needed for the other functions of the 
-system such as read/write API keys to their respective Thingspeak channel, public URLs to their visualisations, which records to
-display from Firebase etc. 
+will be used to identify which user is logging in. Bluetooth was used instead of network mapping as it limits the range
+of discovery. This will decrease the chances of conflicts with other known users on the same network. User identification will 
+derive the configuration needed for the other functions of the system such as read/write API keys to their respective Thingspeak 
+channel, the public URLs of their Matlab Visualisations and will assist in picking which records to display from Firebase. 
 
-When a HTTP request is received, the webservice renders a HTML page, which utilises Jinja templating and some Javascript visuals, 
+When a HTTP request is then received, the webservice renders a HTML page, which utilises Jinja templating and some Javascript visuals, 
 and will display the various environment levels, working time details and controls. The controls will allow the user to switch
 on/off certain devices and start/stop the timers around working hours and break lengths.
 
-In order to communicate with the TP-Link Smart devices, I had installed the python-kasa package which makes use of the proprietary 
-TP-Link Smart Home protocol. As python-kasa utilises asyncio, I would have to change the webservice from using Flask & CORS
-to Quart & quart_cors. This approach had initially been prototyped with the SmartPlugs and worked smoothly and has since been proven to 
+In order to communicate with the TP-Link Smart devices, I had intended to use python-kasa which utilises the TP-Link Smart Home protocol. 
+As python-kasa utilises asyncio, I would have to change the webservice from using Flask & CORS to Quart & quart_cors. 
+This approach had initially been prototyped with the SmartPlugs and worked smoothly and has since been proven to 
 work with the SmartBulb. However, due to an enforced SmartPlug firmware upgrade from TP Link (in the week the project proposal was due), 
 the required ports (TCP 9999) are no longer visible to python-kasa. I have found a workaround where I can post IFTTT maker requests that
-will control the devices instead. It's not as tidy in that I need new triggers for on/off on each device but it will give me full control.
+will toggle the devices instead. It's not as tidy in that I need new triggers for on/off on each device but it will give me full control.
+If a workaround is found for the port issue, I will return to use python-kasa as it allows more options such as checking the device state.
 
 The working day start/end times and total scheduled/unscheduled break lengths will be written to the user's Thingspeak channel 
 at the end of the working day and I have created MATLAB Visualisations so that the start/end times are contained within a 
