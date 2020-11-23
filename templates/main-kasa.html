@@ -220,21 +220,19 @@
 
 <body>
    <h1> Remote Office Manager </h1>
-<!--   <h2> Office Environment Stats </h2> -->
-   <div class="container-fluid">
-      <h2> Office Environment Stats </h2>
+   <h2> Office Environment Stats </h2>
+   <div class="container">
       <div class="row">
          <div class="col-sm" id="temp-container">FusionCharts XT will load here!</div>
          <div class="col-sm" id="humid-container">FusionCharts XT will load here!</div>
       </div>
-      </br>
-      <h2> Device Controls </h2>
+
       <div class="row">
       {% for device in devices %}
          <div class="col-sm">
-            <h3>{{ devices[device].name }}
-            {% if devices[device].state == 'true' %}
-               is currently <strong>on</strong></h3>
+            <h2>{{ devices[device].name }}
+            {% if devices[device].state == true %}
+               is currently <strong>on</strong></h2>
                <div class="row">
                   <div class="col-md-4">
                      <a href="/workday/{{device}}/off" class="btn btn-block btn-lg btn-danger" role="button">Turn off</a>
@@ -252,12 +250,11 @@
       {% endfor %}
       </div>
       </br>
-      <h3> Breaks </h3>
       <div class="row">
          <div class="col-sm">
             <table class="table table-striped">
             <tr>
-            <th colspan="2">Scheduled</th>
+            <th>Scheduled</th>
             </tr>
             <tr>
             <th>Start Time</th>
@@ -271,31 +268,8 @@
             </tr>
             {% endfor %}
             </table>
-         </div>
       </div>
-      </br>
-      <div class="row">
-         <div class="col-sm">
-            <table class="table table-striped">
-            <tr>
-            <th colspan="2">Unscheduled</th>
-            </tr>
-            <tr>
-            <th>Start Time</th>
-            <th>End Time</th>
-            </tr>
-
-            {% for time in times %}
-            <tr>
-            <td>{{ times[time].start }}</td>
-            <td>{{ times[time].end }} </td>
-            </tr>
-            {% endfor %}
-            </table>
-         </div>
       </div>
-      </br>
-      <h3> Weekly Start/End Times </h3>
       <div class="row">
          <div class="col-sm"><iframe width='500' height='300' style='border: 1px solid' src="{{ chart1 }}"></iframe></div>
          <div class="col-sm"><iframe width='500' height='300' style='border: 1px solid' src="{{ chart2 }}"></iframe></div>

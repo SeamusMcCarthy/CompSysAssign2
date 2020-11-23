@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 # Quart used instead of Flask as asyncio is required for kasa
-# kasa no longer used for plugs but retain Quart in case fix is found
+# kasa no longer used to retain Quart in case fix is found
 #from kasa import SmartPlug
-#from kasa import SmartBulb
+from kasa import SmartBulb
 
 from quart import Quart, render_template, request
 from quart_cors import cors
@@ -14,7 +14,8 @@ import time
 import json
 import os
 import asyncio
-import requests
+
+# add config file?
 
 # Setup Bluetooth discovery
 print('Performing Bluetooth scan...')
@@ -54,9 +55,9 @@ firebase = firebase.FirebaseApplication('https://compsys2020-154671.firebaseio.c
 
 # Create a dictionary for smart devices
 devices = {
-   1 : {'name' : 'Dehumidifier', 'ip' : '192.168.68.103', 'state' : 'false', 'type' : 'plug'},
-   2 : {'name' : 'Room Heater', 'ip' : '192.168.68.114', 'state' : 'false', 'type' : 'plug'},
-   3 : {'name' : 'Do Not Disturb', 'ip' : '192.168.68.118', 'state' : 'false', 'type' : 'bulb'}
+   1 : {'name' : 'Do Not Disturb', 'ip' : '192.168.68.118', 'state' : 'false', 'type' : 'bulb'}
+#   2 : {'name' : 'Dehumidifier', 'ip' : '192.168.68.103', 'state' : 'false', 'type' : 'plug'},
+#   3 : {'name' : 'Heater', 'ip' : '192.168.68.114', 'state' : 'false', 'type' : 'plug'}
 }
 
 # Define Thingspeak visualisation URLs - Seamus
@@ -77,6 +78,15 @@ async def workday():
 
     temp=round(sense.get_temperature(),2)
     humid=round(sense.get_humidity(),2)
+
+    for device in devices:
+        ip = devices[device]['ip']
+        print(ip)
+        p = SmartBulb(ip)
+        await p.update()
+        print(p.alias)
+        devices[device]['state'] = p.is_on
+        print("Current state is " + str(devices[device]['state']))
 
     templateData = {
        'devices' : devices,
@@ -100,24 +110,21 @@ async def action(device, action):
    temp=round(sense.get_temperature(),2)
    humid=round(sense.get_humidity(),2)
 
-
    device = int(device)
-   if device == 1:
-      url = 'https://maker.ifttt.com/trigger/ToggleOffice1/with/key/bTQ6D-WnYUA6ZpK2vQ_95m'
-      x = requests.post(url)
+   deviceName = devices[device]['name']
+   if action == 'on':
+      p = SmartBulb(devices[device]['ip'])
+      await (p.turn_on())
+   if action == 'off':
+   # turn off bulb
+      p = SmartBulb(devices[device]['ip'])
+      await (p.turn_off())
 
-   if device == 2:
-      url = 'https://maker.ifttt.com/trigger/ToggleOffice3/with/key/bTQ6D-WnYUA6ZpK2vQ_95m'
-      x = requests.post(url)
-
-   if device == 3:
-      url = 'https://maker.ifttt.com/trigger/ToggleLight/with/key/bTQ6D-WnYUA6ZpK2vQ_95m'
-      x = requests.post(url)
-
-   if devices[device]['state'] == 'true':
-      devices[device]['state'] = 'false'
-   else: 
-      devices[device]['state'] = 'true'
+   for device in devices:
+       ip = devices[device]['ip']
+       p = SmartBulb(ip)
+       await p.update()
+       devices[device]['state'] = p.is_on
 
    templateData = {
        'devices' : devices,
