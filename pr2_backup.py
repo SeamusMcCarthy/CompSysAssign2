@@ -6,8 +6,8 @@
 #from kasa import SmartBulb
 
 #from quart import Quart, render_template, request, flash
-#from quart_cors import cors
 from flask import Flask, render_template, request, flash
+#from quart_cors import cors
 from flask_cors import CORS
 from sense_hat import SenseHat
 from firebase import firebase
@@ -28,7 +28,6 @@ sense.clear()
 #cors(app)
 app = Flask(__name__)
 CORS(app)
-# Needed for flash
 app.secret_key = b'_5_5_5_5_5_5xec]'
 
 # Firebase
