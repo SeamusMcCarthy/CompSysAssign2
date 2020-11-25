@@ -67,7 +67,7 @@ def workday():
        'breaks' : breaks
     }
 #    await flash("Welcome to SHOM")
-    flash("Welcome to SHOM")
+#    flash("Welcome to SHOM")
 #    return await render_template('main.html', **templateData)
     return render_template('main.html', **templateData)
 
@@ -76,7 +76,7 @@ def workday():
 def action(device, action):
     getFirebase_data()
     env = getSense_data()
-    toggleDevice(device)
+    devices = toggleDevice(device)
 
     templateData = {
         'devices' : devices,
@@ -155,6 +155,8 @@ def toggleDevice(device):
        devices[device]['state'] = 'false'
     else: 
        devices[device]['state'] = 'true'
+
+    return devices
 
 if __name__ == "__main__":
     check_bluetooth()
