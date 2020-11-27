@@ -116,7 +116,7 @@ def day_action(action):
        end_time = datetime.now().strftime("%H:%M:%S")
 #       sense.show_message("Ending the day at " + end_time)
        print(start_time + " " + end_time)
-
+       conn = urlopen(baseURL + '&field1=%s&field2=%s&field3=%s&field4=%s&created_at="2020-11-27T00:00:00Z"' % (start_time, end_time, '50', '80'))
     templateData = {
         'devices' : devices,
         'temp' : env[0],
