@@ -99,22 +99,34 @@ def device_action(device, action):
     }
     return render_template('main.html', **templateData)
 
-#@app.route('/workday/<device>/<action>')
-#def device_action(device, action):
-#    getFirebase_data()
-#    env = getSense_data()
-#    devices = toggle_device(device)
-#
-#    templateData = {
-#        'devices' : devices,
-#        'temp' : env[0],
-#        'humid' : env[1],
-#        'chart1' : text1,
-#        'chart2' : text2,
-#        'breaks' : breaks,
-#        'day' : day
-#    }
-#    return render_template('main.html', **templateData)
+@app.route('/workday/day/<action>')
+def day_action(action):
+    getFirebase_data()
+    env = getSense_data()
+    global start_time
+    global end_time
+    global day
+    if day == 'false' and action == 'on':
+       day = 'true'
+       start_time = datetime.now().strftime("%H:%M:%S")
+#       sense.show_message("Starting the day at " + start_time)
+
+    if day == 'true' and action == 'off':
+       day = 'false'
+       end_time = datetime.now().strftime("%H:%M:%S")
+#       sense.show_message("Ending the day at " + end_time)
+       print(start_time + " " + end_time)
+
+    templateData = {
+        'devices' : devices,
+        'temp' : env[0],
+        'humid' : env[1],
+        'chart1' : text1,
+        'chart2' : text2,
+        'breaks' : breaks,
+        'day' : day
+    }
+    return render_template('main.html', **templateData)
 
 
 
@@ -126,7 +138,6 @@ def break_action(break_type, action):
     env = getSense_data()
     global break_start_time
     global break_end_time
-    global user
     if breaks[break_type]['state'] == 'false' and action == 'on':
        breaks[break_type]['state'] = 'true'
        break_start_time = datetime.now().strftime("%H:%M:%S")
@@ -148,9 +159,6 @@ def break_action(break_type, action):
         'day' : day
     }
     return render_template('main.html', **templateData)
-
-
-
 
 def check_bluetooth():
    # Setup Bluetooth discovery
