@@ -13,6 +13,7 @@ from sense_hat import SenseHat
 from firebase import firebase
 from bluetooth import *
 from datetime import datetime
+from urllib.request import urlopen
 import time
 import json
 import os
@@ -29,7 +30,7 @@ sense.clear()
 app = Flask(__name__)
 CORS(app)
 # Needed for flash
-app.secret_key = b'_5_5_5_5_5_5xec]'
+#app.secret_key = b'_5_5_5_5_5_5xec]'
 
 # Firebase
 firebase = firebase.FirebaseApplication('https://compsys2020-154671.firebaseio.com/', None)
@@ -47,9 +48,21 @@ breaks = {
    2 : {'name' : 'Unscheduled', 'state' : 'false'}
 }
 
+# Define Thingspeak channel API
+WRITE_API_KEY='0GG6PVV1IBH096HV'
+baseURL='https://api.thingspeak.com/update?api_key=%s' % WRITE_API_KEY
+
 # Define Thingspeak visualisation URLs - Seamus
 text1="https://thingspeak.com/apps/matlab_visualizations/374478"
 text2="https://thingspeak.com/apps/matlab_visualizations/374485"
+
+# Initialise working day and timestamps
+day="false"
+start_time=""
+end_time=""
+break_start_time=""
+break_end_time=""
+total_break_time=""
 
 # Main Route
 @app.route('/workday')
@@ -64,19 +77,16 @@ def workday():
        'humid' : env[1],
        'chart1' : text1,
        'chart2' : text2,
-       'breaks' : breaks
+       'breaks' : breaks,
+       'day' : day
     }
-#    await flash("Welcome to SHOM")
-#    flash("Welcome to SHOM")
-#    return await render_template('main.html', **templateData)
     return render_template('main.html', **templateData)
 
 @app.route('/workday/<device>/<action>')
-#async def action(device, action):
-def action(device, action):
+def device_action(device, action):
     getFirebase_data()
     env = getSense_data()
-    devices = toggleDevice(device)
+    devices = toggle_device(device)
 
     templateData = {
         'devices' : devices,
@@ -84,10 +94,63 @@ def action(device, action):
         'humid' : env[1],
         'chart1' : text1,
         'chart2' : text2,
-        'breaks' : breaks
+        'breaks' : breaks,
+        'day' : day
     }
-#    return await render_template('main.html', **templateData)
     return render_template('main.html', **templateData)
+
+#@app.route('/workday/<device>/<action>')
+#def device_action(device, action):
+#    getFirebase_data()
+#    env = getSense_data()
+#    devices = toggle_device(device)
+#
+#    templateData = {
+#        'devices' : devices,
+#        'temp' : env[0],
+#        'humid' : env[1],
+#        'chart1' : text1,
+#        'chart2' : text2,
+#        'breaks' : breaks,
+#        'day' : day
+#    }
+#    return render_template('main.html', **templateData)
+
+
+
+@app.route('/workday/break/<break_type>/<action>')
+def break_action(break_type, action):
+    print("Break_type = " + break_type)
+    break_type = int(break_type)
+    getFirebase_data()
+    env = getSense_data()
+    global break_start_time
+    global break_end_time
+    global user
+    if breaks[break_type]['state'] == 'false' and action == 'on':
+       breaks[break_type]['state'] = 'true'
+       break_start_time = datetime.now().strftime("%H:%M:%S")
+#       sense.show_message("Starting the day at " + start_time)
+
+    if breaks[break_type]['state'] == 'true' and action == 'off':
+       breaks[break_type]['state'] = 'false'
+       break_end_time = datetime.now().strftime("%H:%M:%S")
+#       sense.show_message("Ending the day at " + end_time)
+       print(break_start_time + " " + break_end_time)
+
+    templateData = {
+        'devices' : devices,
+        'temp' : env[0],
+        'humid' : env[1],
+        'chart1' : text1,
+        'chart2' : text2,
+        'breaks' : breaks,
+        'day' : day
+    }
+    return render_template('main.html', **templateData)
+
+
+
 
 def check_bluetooth():
    # Setup Bluetooth discovery
@@ -116,7 +179,6 @@ def check_bluetooth():
 def getSense_data():
     temp=round(sense.get_temperature(),2)
     humid=round(sense.get_humidity(),2)
-    print(temp, humid)
     return temp, humid
 
 def getFirebase_data():
@@ -137,7 +199,7 @@ def getFirebase_data():
     breaks[1]['times'] = sbreaks
     breaks[2]['times'] = ubreaks
 
-def toggleDevice(device):
+def toggle_device(device):
     device = int(device)
     if device == 1:
        url = 'https://maker.ifttt.com/trigger/ToggleOffice1/with/key/bTQ6D-WnYUA6ZpK2vQ_95m'

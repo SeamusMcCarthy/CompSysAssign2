@@ -54,8 +54,13 @@
 
 <body>
    <div class="container">
-      <div class="row border border-primary rounded" style="margin-top: 10px; padding-bottom: 10px;">   
+      <div class="row border border-primary rounded" style="margin-top: 10px; padding: 10px;">   
          <h1 style="margin: auto;"> SHOM : Smart Home Office Manager </h1>
+         {% if day == 'false' %}
+            <a href="/workday/day/{{day}}/on" class="btn btn-lg btn-success" role="button">Start Day</a>
+         {% else %}
+            <a href="/workday/day/{{day}}/off" class="btn btn-lg btn-danger" role="button">End Day</a>
+         {% endif %}
       </div>
       <div class="row border border-primary rounded" style="margin-top: 10px; margin-bottom: 10px; padding-bottom:10px;">
           <div class="col-sm"><h2> Office Environment Stats </h2></div>
@@ -93,9 +98,9 @@
                <tr>
                   <th colspan="2">
                      {% if breaks[break].state == 'false' %}
-                        <a href="/workday/break/1/on" class="btn btn-lg btn-success" role="button">Start Break</a>
+                        <a href="/workday/break/{{break}}/on" class="btn btn-lg btn-success" role="button">Start Break</a>
                      {% else %}
-                        <a href="/workday/break/1/off" class="btn  btn-lg btn-danger" role="button">End Break</a>
+                        <a href="/workday/break/{{break}}/off" class="btn  btn-lg btn-danger" role="button">End Break</a>
                      {% endif %}
                   </th>
                </tr>
