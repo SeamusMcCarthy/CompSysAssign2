@@ -86,7 +86,11 @@ def workday():
 def device_action(device, action):
     getFirebase_data()
     env = getSense_data()
-    devices = toggle_device(device)
+    global devices
+    device = int(device)
+    if ((devices[device]['state'] == 'true' and action == 'off') 
+    or (devices[device]['state'] == 'false' and action == 'on')):
+       devices = toggle_device(device)
 
     templateData = {
         'devices' : devices,
