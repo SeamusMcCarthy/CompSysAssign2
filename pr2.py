@@ -58,11 +58,13 @@ text2="https://thingspeak.com/apps/matlab_visualizations/374485"
 
 # Initialise working day and timestamps
 day="false"
-start_time=""
-end_time=""
 break_start_time=""
-break_end_time=""
-total_break_time=""
+total_scheduled_break_time = datetime.strptime("00:00:00","%H:%M:%S")
+total_unscheduled_break_time = datetime.strptime("00:00:00","%H:%M:%S")
+print(total_scheduled_break_time)
+print(total_unscheduled_break_time)
+
+user=""
 
 # Main Route
 @app.route('/workday')
@@ -108,19 +110,24 @@ def day_action(action):
     getFirebase_data()
     env = getSense_data()
     global start_time
-    global end_time
     global day
     if day == 'false' and action == 'on':
        day = 'true'
-       start_time = datetime.now().strftime("%H:%M:%S")
-#       sense.show_message("Starting the day at " + start_time)
+       start_time_hr = int(datetime.now().strftime("%H"))
+       start_time_mn = int(datetime.now().strftime("%M"))
+       start_time_sc = int(datetime.now().strftime("%S"))
+       start_time = str(round(start_time_hr + ((start_time_mn * 60 + start_time_sc) / 3600),2))
 
     if day == 'true' and action == 'off':
        day = 'false'
-       end_time = datetime.now().strftime("%H:%M:%S")
-#       sense.show_message("Ending the day at " + end_time)
-       print(start_time + " " + end_time)
-       conn = urlopen(baseURL + '&field1=%s&field2=%s&field3=%s&field4=%s&created_at="2020-11-27T00:00:00Z"' % (start_time, end_time, '50', '80'))
+       end_time_hr = int(datetime.now().strftime("%H"))
+       end_time_mn = int(datetime.now().strftime("%M"))
+       end_time_sc = int(datetime.now().strftime("%S"))
+       end_time = str(round(end_time_hr + ((end_time_mn * 60 + end_time_sc) / 3600),2))
+
+       end_date = "2020-11-29T00:00:00Z"
+       conn = urlopen(baseURL + '&field1=%s&field2=%s&field3=%s&field4=%s&created_at="%s"' % (start_time, end_time, '50', '80', end_date))
+
     templateData = {
         'devices' : devices,
         'temp' : env[0],
@@ -132,26 +139,44 @@ def day_action(action):
     }
     return render_template('main.html', **templateData)
 
-
-
 @app.route('/workday/break/<break_type>/<action>')
 def break_action(break_type, action):
-    print("Break_type = " + break_type)
+    global user
+    global break_start_time
+    global total_scheduled_break_time
+    global total_unscheduled_break_time
+
     break_type = int(break_type)
     getFirebase_data()
     env = getSense_data()
-    global break_start_time
-    global break_end_time
+
     if breaks[break_type]['state'] == 'false' and action == 'on':
        breaks[break_type]['state'] = 'true'
        break_start_time = datetime.now().strftime("%H:%M:%S")
-#       sense.show_message("Starting the day at " + start_time)
 
     if breaks[break_type]['state'] == 'true' and action == 'off':
        breaks[break_type]['state'] = 'false'
        break_end_time = datetime.now().strftime("%H:%M:%S")
-#       sense.show_message("Ending the day at " + end_time)
+       break_duration = datetime.strptime(break_end_time,"%H:%M:%S") - datetime.strptime(break_start_time,"%H:%M:%S")
        print(break_start_time + " " + break_end_time)
+       break_date = datetime.now().strftime("%Y-%m-%d")
+       if break_type == 1:
+          target = '/scheduled'
+          total_scheduled_break_time += break_duration
+       else:
+          target = '/unscheduled'
+          total_unscheduled_break_time += break_duration
+
+       print(total_scheduled_break_time)
+       print(total_unscheduled_break_time)
+
+       data = {
+          'Date' : break_date,
+          'Name' : user,
+          'Start' : break_start_time,
+          'End' : break_end_time
+       }
+       result = firebase.post(target, data)
 
     templateData = {
         'devices' : devices,
@@ -167,6 +192,8 @@ def break_action(break_type, action):
 def check_bluetooth():
    # Setup Bluetooth discovery
    print('Performing Bluetooth scan...')
+   global user
+   user='Seamus'
    #nearby_phones = discover_devices(lookup_names = True)
    #print(nearby_phones)
    
@@ -183,7 +210,6 @@ def check_bluetooth():
    #    if name in known_phones:
    #       print(known_phones[name])
    #       user = known_phones[name]
-
    #if user == '':
    #   print('No user identified. Please turn on Bluetooth and try again')
    #   exit()
