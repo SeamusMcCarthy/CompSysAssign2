@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <head>
    <title>RPi Web Server</title>
-<meta http-equiv="refresh" content="30">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+   <meta http-equiv="refresh" content="60">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
    <script type="text/javascript">
       google.charts.load('current', {'packages':['gauge']});
       google.charts.setOnLoadCallback(drawChart1);
@@ -51,6 +51,37 @@
         chart.draw(data2, options);
       }
    </script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['timeline']});
+      google.charts.setOnLoadCallback(drawChart3);
+      function drawChart3() {
+        var container = document.getElementById('timeline');
+        var chart = new google.visualization.Timeline(container);
+        var dataTable = new google.visualization.DataTable();
+
+        dataTable.addColumn({ type: 'string', id: 'Break Type' });
+        dataTable.addColumn({ type: 'date', id: 'Start' });
+        dataTable.addColumn({ type: 'date', id: 'End' });
+        {% for break in breaks %}
+           dataTable.addRows([
+              {% for times in breaks[break].times %}
+                 {% set shr = breaks[break].times[times].start[0:2] %}
+                 {% set smn = breaks[break].times[times].start[3:5] %}
+                 {% set ssc = breaks[break].times[times].start[6:8] %}
+                 {% set ehr = breaks[break].times[times].end[0:2] %}
+                 {% set emn = breaks[break].times[times].end[3:5] %}
+                 {% set esc = breaks[break].times[times].end[6:8] %}
+                 {% if times == 1 %}
+                    ['{{ breaks[break].name }}', new Date(0,0,0,{{ shr }}, {{ smn }}, {{ ssc }}), new Date(0,0,0,{{ ehr }}, {{ emn }}, {{ esc }})]
+                 {% else %}
+                    ,['{{ breaks[break].name }}', new Date(0,0,0,{{ shr }}, {{ smn }}, {{ ssc }}), new Date(0,0,0,{{ ehr }}, {{ emn }}, {{ esc }})]
+                 {% endif %}
+              {% endfor %} ]);
+        {% endfor %}
+
+        chart.draw(dataTable);
+      }
+    </script>
 </head>
 
 <body>
@@ -91,6 +122,10 @@
          </div>
       {% endfor %}
       </div>
+      <div class="row border border-primary rounded" style="margin-bottom: 10px;">
+         <div class="col-md-12" style="padding-top: 10px";><h3>Break Timeline</h3></div>
+         <div id="timeline" class="col-md-12" style="height: 140px;"></div>
+      </div>
       {% for break in breaks %}
       <div class="row border border-primary rounded" style="margin-bottom: 10px;">
          <div class="col-md-12" style="padding-top: 10px";><h3>Break Type : {{ breaks[break].name }} </h3></div>
@@ -120,11 +155,10 @@
          </div>
       </div>
       {% endfor %}
-      <div class="row border border-primary rounded" style="margin-bottom:10px;">
+      <div class="row border border-primary rounded" style="margin-bottom:10px; padding-bottom: 10px;">
          <div class="col-md-12" style="padding-top:10px;"><h3>Weekly Start/End Times</h3></div>
          <div class="col-md" style="margin: 0 auto;"><iframe width='500' height='300' style='border: 1px solid; margin: 0 auto; display:block;' src="{{ chart1 }}"></iframe></div>
          <div class="col-md" style="margin: 0 auto;"><iframe width='500' height='300' style='border: 1px solid; margin: 0 auto; display:block;' src="{{ chart2 }}"></iframe></div>
-<!--         <div class="col-md" style="margin: 0 auto;"><iframe width='1000' height='600' style='border: 1px solid; margin: 0 auto; display:block;' src="https://cloud4rpi.io/s/b5x9KM9X"></iframe></div>-->
       </div>
    </div>
 </body>

@@ -6,13 +6,14 @@
 #from kasa import SmartBulb
 
 #from quart import Quart, render_template, request, flash
-from flask import Flask, render_template, request, flash
 #from quart_cors import cors
+from flask import Flask, render_template, request, flash
 from flask_cors import CORS
 from sense_hat import SenseHat
 from firebase import firebase
 from bluetooth import *
 from datetime import datetime
+from urllib.request import urlopen
 import time
 import json
 import os
@@ -28,7 +29,8 @@ sense.clear()
 #cors(app)
 app = Flask(__name__)
 CORS(app)
-app.secret_key = b'_5_5_5_5_5_5xec]'
+# Needed for flash
+#app.secret_key = b'_5_5_5_5_5_5xec]'
 
 # Firebase
 firebase = firebase.FirebaseApplication('https://compsys2020-154671.firebaseio.com/', None)
@@ -46,9 +48,23 @@ breaks = {
    2 : {'name' : 'Unscheduled', 'state' : 'false'}
 }
 
+# Define Thingspeak channel API
+WRITE_API_KEY='0GG6PVV1IBH096HV'
+baseURL='https://api.thingspeak.com/update?api_key=%s' % WRITE_API_KEY
+
 # Define Thingspeak visualisation URLs - Seamus
 text1="https://thingspeak.com/apps/matlab_visualizations/374478"
 text2="https://thingspeak.com/apps/matlab_visualizations/374485"
+
+# Initialise working day and timestamps
+day="false"
+break_start_time=""
+total_scheduled_break_time = datetime.strptime("00:00:00","%H:%M:%S")
+total_unscheduled_break_time = datetime.strptime("00:00:00","%H:%M:%S")
+print(total_scheduled_break_time)
+print(total_unscheduled_break_time)
+
+user=""
 
 # Main Route
 @app.route('/workday')
@@ -63,19 +79,20 @@ def workday():
        'humid' : env[1],
        'chart1' : text1,
        'chart2' : text2,
-       'breaks' : breaks
+       'breaks' : breaks,
+       'day' : day
     }
-#    await flash("Welcome to SHOM")
-    flash("Welcome to SHOM")
-#    return await render_template('main.html', **templateData)
     return render_template('main.html', **templateData)
 
 @app.route('/workday/<device>/<action>')
-#async def action(device, action):
-def action(device, action):
+def device_action(device, action):
     getFirebase_data()
     env = getSense_data()
-    toggleDevice(device)
+    global devices
+    device = int(device)
+    if ((devices[device]['state'] == 'true' and action == 'off') 
+    or (devices[device]['state'] == 'false' and action == 'on')):
+       devices = toggle_device(device)
 
     templateData = {
         'devices' : devices,
@@ -83,14 +100,100 @@ def action(device, action):
         'humid' : env[1],
         'chart1' : text1,
         'chart2' : text2,
-        'breaks' : breaks
+        'breaks' : breaks,
+        'day' : day
     }
-#    return await render_template('main.html', **templateData)
+    return render_template('main.html', **templateData)
+
+@app.route('/workday/day/<action>')
+def day_action(action):
+    getFirebase_data()
+    env = getSense_data()
+    global start_time
+    global day
+    if day == 'false' and action == 'on':
+       day = 'true'
+       start_time_hr = int(datetime.now().strftime("%H"))
+       start_time_mn = int(datetime.now().strftime("%M"))
+       start_time_sc = int(datetime.now().strftime("%S"))
+       start_time = str(round(start_time_hr + ((start_time_mn * 60 + start_time_sc) / 3600),2))
+
+    if day == 'true' and action == 'off':
+       day = 'false'
+       end_time_hr = int(datetime.now().strftime("%H"))
+       end_time_mn = int(datetime.now().strftime("%M"))
+       end_time_sc = int(datetime.now().strftime("%S"))
+       end_time = str(round(end_time_hr + ((end_time_mn * 60 + end_time_sc) / 3600),2))
+
+       end_date = "2020-11-29T00:00:00Z"
+       conn = urlopen(baseURL + '&field1=%s&field2=%s&field3=%s&field4=%s&created_at="%s"' % (start_time, end_time, '50', '80', end_date))
+
+    templateData = {
+        'devices' : devices,
+        'temp' : env[0],
+        'humid' : env[1],
+        'chart1' : text1,
+        'chart2' : text2,
+        'breaks' : breaks,
+        'day' : day
+    }
+    return render_template('main.html', **templateData)
+
+@app.route('/workday/break/<break_type>/<action>')
+def break_action(break_type, action):
+    global user
+    global break_start_time
+    global total_scheduled_break_time
+    global total_unscheduled_break_time
+
+    break_type = int(break_type)
+    getFirebase_data()
+    env = getSense_data()
+
+    if breaks[break_type]['state'] == 'false' and action == 'on':
+       breaks[break_type]['state'] = 'true'
+       break_start_time = datetime.now().strftime("%H:%M:%S")
+
+    if breaks[break_type]['state'] == 'true' and action == 'off':
+       breaks[break_type]['state'] = 'false'
+       break_end_time = datetime.now().strftime("%H:%M:%S")
+       break_duration = datetime.strptime(break_end_time,"%H:%M:%S") - datetime.strptime(break_start_time,"%H:%M:%S")
+       print(break_start_time + " " + break_end_time)
+       break_date = datetime.now().strftime("%Y-%m-%d")
+       if break_type == 1:
+          target = '/scheduled'
+          total_scheduled_break_time += break_duration
+       else:
+          target = '/unscheduled'
+          total_unscheduled_break_time += break_duration
+
+       print(total_scheduled_break_time)
+       print(total_unscheduled_break_time)
+
+       data = {
+          'Date' : break_date,
+          'Name' : user,
+          'Start' : break_start_time,
+          'End' : break_end_time
+       }
+       result = firebase.post(target, data)
+
+    templateData = {
+        'devices' : devices,
+        'temp' : env[0],
+        'humid' : env[1],
+        'chart1' : text1,
+        'chart2' : text2,
+        'breaks' : breaks,
+        'day' : day
+    }
     return render_template('main.html', **templateData)
 
 def check_bluetooth():
    # Setup Bluetooth discovery
    print('Performing Bluetooth scan...')
+   global user
+   user='Seamus'
    #nearby_phones = discover_devices(lookup_names = True)
    #print(nearby_phones)
    
@@ -107,7 +210,6 @@ def check_bluetooth():
    #    if name in known_phones:
    #       print(known_phones[name])
    #       user = known_phones[name]
-
    #if user == '':
    #   print('No user identified. Please turn on Bluetooth and try again')
    #   exit()
@@ -115,7 +217,6 @@ def check_bluetooth():
 def getSense_data():
     temp=round(sense.get_temperature(),2)
     humid=round(sense.get_humidity(),2)
-    print(temp, humid)
     return temp, humid
 
 def getFirebase_data():
@@ -136,7 +237,7 @@ def getFirebase_data():
     breaks[1]['times'] = sbreaks
     breaks[2]['times'] = ubreaks
 
-def toggleDevice(device):
+def toggle_device(device):
     device = int(device)
     if device == 1:
        url = 'https://maker.ifttt.com/trigger/ToggleOffice1/with/key/bTQ6D-WnYUA6ZpK2vQ_95m'
@@ -154,6 +255,8 @@ def toggleDevice(device):
        devices[device]['state'] = 'false'
     else: 
        devices[device]['state'] = 'true'
+
+    return devices
 
 if __name__ == "__main__":
     check_bluetooth()
