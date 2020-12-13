@@ -1,38 +1,24 @@
 #!/usr/bin/python3
 
-# Quart used instead of Flask as asyncio is required for kasa
-# kasa no longer used for plugs but retain Quart in case fix is found
-#from kasa import SmartPlug
-#from kasa import SmartBulb
-
-#from quart import Quart, render_template, request, flash
-#from quart_cors import cors
-from flask import Flask, render_template, request, flash
+from flask import Flask, render_template, request
 from flask_cors import CORS
 from sense_hat import SenseHat
 from firebase import firebase
 from bluetooth import *
 from datetime import datetime
+from datetime import date
 from urllib.request import urlopen
+from gpiozero import MotionSensor
 import time
 import json
 import os
-import asyncio
 import requests
 
-# Setup and clear SenseHat
-sense = SenseHat()
-sense.clear()
-
-# Setup Quart app
-#app = Quart(__name__)
-#cors(app)
+# Setup Flask app
 app = Flask(__name__)
 CORS(app)
-# Needed for flash
-#app.secret_key = b'_5_5_5_5_5_5xec]'
 
-# Firebase
+# Firebase DB details
 firebase = firebase.FirebaseApplication('https://compsys2020-154671.firebaseio.com/', None)
 
 # Create a dictionary for smart devices
@@ -48,27 +34,26 @@ breaks = {
    2 : {'name' : 'Unscheduled', 'state' : 'false'}
 }
 
-# Define Thingspeak channel API
-WRITE_API_KEY='0GG6PVV1IBH096HV'
-baseURL='https://api.thingspeak.com/update?api_key=%s' % WRITE_API_KEY
-
-# Define Thingspeak visualisation URLs - Seamus
-text1="https://thingspeak.com/apps/matlab_visualizations/374478"
-text2="https://thingspeak.com/apps/matlab_visualizations/374485"
+# Setup and clear SenseHat
+sense = SenseHat()
+sense.clear()
 
 # Initialise working day and timestamps
+# Total break times using 1900-01-01 but this doesn't matter as I only want the time portion
 day="false"
 break_start_time=""
 total_scheduled_break_time = datetime.strptime("00:00:00","%H:%M:%S")
 total_unscheduled_break_time = datetime.strptime("00:00:00","%H:%M:%S")
-print(total_scheduled_break_time)
-print(total_unscheduled_break_time)
 
+# Initialize vars to be populated once user is known. Need them defined globally.
 user=""
+TSapi=""
+visual1=""
+visual2=""
+baseURL=""
 
 # Main Route
 @app.route('/workday')
-#async def workday():
 def workday():
     getFirebase_data()
     env = getSense_data()
@@ -77,38 +62,43 @@ def workday():
        'devices' : devices,
        'temp' : env[0],
        'humid' : env[1],
-       'chart1' : text1,
-       'chart2' : text2,
+       'chart1' : visual1,
+       'chart2' : visual2,
        'breaks' : breaks,
        'day' : day
     }
     return render_template('main.html', **templateData)
 
+# Handle change of device setting
 @app.route('/workday/<device>/<action>')
 def device_action(device, action):
-    getFirebase_data()
-    env = getSense_data()
     global devices
+
+#    getFirebase_data()
+#    env = getSense_data()
     device = int(device)
     if ((devices[device]['state'] == 'true' and action == 'off') 
     or (devices[device]['state'] == 'false' and action == 'on')):
        devices = toggle_device(device)
 
+    getFirebase_data()
+    env = getSense_data()
     templateData = {
         'devices' : devices,
         'temp' : env[0],
         'humid' : env[1],
-        'chart1' : text1,
-        'chart2' : text2,
+        'chart1' : visual1,
+        'chart2' : visual2,
         'breaks' : breaks,
         'day' : day
     }
     return render_template('main.html', **templateData)
 
+# Manage starting/ending the working day
 @app.route('/workday/day/<action>')
 def day_action(action):
-    getFirebase_data()
-    env = getSense_data()
+#    getFirebase_data()
+#    env = getSense_data()
     global start_time
     global day
     if day == 'false' and action == 'on':
@@ -124,7 +114,7 @@ def day_action(action):
        end_time_mn = int(datetime.now().strftime("%M"))
        end_time_sc = int(datetime.now().strftime("%S"))
        end_time = str(round(end_time_hr + ((end_time_mn * 60 + end_time_sc) / 3600),2))
-       end_date = datetime.now().strftime("%Y-%M-%d")
+       end_date = datetime.now().strftime("%Y-%m-%d")
        end_date = end_date + "T00:00:00Z"
 
        sch_hr = int(total_scheduled_break_time.strftime("%H")) * 60
@@ -139,17 +129,20 @@ def day_action(action):
 
        conn = urlopen(baseURL + '&field1=%s&field2=%s&field3=%s&field4=%s&created_at="%s"' % (start_time, end_time, sch_tot, unsch_tot, end_date))
 
+    getFirebase_data()
+    env = getSense_data()
     templateData = {
         'devices' : devices,
         'temp' : env[0],
         'humid' : env[1],
-        'chart1' : text1,
-        'chart2' : text2,
+        'chart1' : visual1,
+        'chart2' : visual2,
         'breaks' : breaks,
         'day' : day
     }
     return render_template('main.html', **templateData)
 
+# Manage starting/ending a break
 @app.route('/workday/break/<break_type>/<action>')
 def break_action(break_type, action):
     global user
@@ -158,8 +151,8 @@ def break_action(break_type, action):
     global total_unscheduled_break_time
 
     break_type = int(break_type)
-    getFirebase_data()
-    env = getSense_data()
+#    getFirebase_data()
+#    env = getSense_data()
 
     if breaks[break_type]['state'] == 'false' and action == 'on':
        breaks[break_type]['state'] = 'true'
@@ -169,17 +162,14 @@ def break_action(break_type, action):
        breaks[break_type]['state'] = 'false'
        break_end_time = datetime.now().strftime("%H:%M:%S")
        break_duration = datetime.strptime(break_end_time,"%H:%M:%S") - datetime.strptime(break_start_time,"%H:%M:%S")
-       print(break_start_time + " " + break_end_time)
        break_date = datetime.now().strftime("%Y-%m-%d")
+
        if break_type == 1:
           target = '/scheduled'
           total_scheduled_break_time += break_duration
        else:
           target = '/unscheduled'
           total_unscheduled_break_time += break_duration
-
-       print(total_scheduled_break_time)
-       print(total_unscheduled_break_time)
 
        data = {
           'Date' : break_date,
@@ -189,41 +179,59 @@ def break_action(break_type, action):
        }
        result = firebase.post(target, data)
 
+    getFirebase_data()
+    env = getSense_data()
     templateData = {
         'devices' : devices,
         'temp' : env[0],
         'humid' : env[1],
-        'chart1' : text1,
-        'chart2' : text2,
+        'chart1' : visual1,
+        'chart2' : visual2,
         'breaks' : breaks,
         'day' : day
     }
     return render_template('main.html', **templateData)
 
-def check_bluetooth():
-   # Setup Bluetooth discovery
-   print('Performing Bluetooth scan...')
+def setup_steps():
    global user
-   user='Seamus'
-   #nearby_phones = discover_devices(lookup_names = True)
-   #print(nearby_phones)
-   
-   #known_phones = {
-   #  '88:BD:45:06:34:87': 'Seamus'
-   #} 
-   
-   #phones = []
-   #for name, addr in nearby_phones:
-   #    phones.append(name)
- 
-   #user = ''
-   #for name in phones:
-   #    if name in known_phones:
-   #       print(known_phones[name])
-   #       user = known_phones[name]
-   #if user == '':
-   #   print('No user identified. Please turn on Bluetooth and try again')
-   #   exit()
+   global visual1
+   global visual2
+   global baseURL
+
+# Setup PIR & wait for motion. 
+# Need the wait outside of the main loop or it will execute each time the template code changes
+   pir = MotionSensor(4)
+   pir.wait_for_motion()
+
+# Setup Bluetooth discovery
+   print('Performing Bluetooth scan...')
+   nearby_phones = discover_devices(lookup_names = True)
+
+# List of MAC addresses and associated user details - name, Thingspeak channel, Matlab visualisations
+   known_phones = {
+     '88:BD:45:06:34:87': { 'uname' : 'Seamus', 'api' : '0GG6PVV1IBH096HV', 'mvis1' : '374478', 'mvis2' : '374485'},
+     '12:23:34:45:56:67': { 'uname' : 'Tracy', 'api' : '0GG6PVV1IBH096HA', 'mvis1' : '374477', 'mvis2' : '374486'}
+   }
+
+   phones = []
+   for addr, name in nearby_phones:
+       phones.append(addr)
+
+   for addr in phones:
+       if addr in known_phones:
+          user = known_phones[addr]['uname']
+          print(user + " has logged on")
+          baseURL='https://api.thingspeak.com/update?api_key=%s' % known_phones[addr]['api'] 
+          visual1="https://thingspeak.com/apps/matlab_visualizations/%s" % known_phones[addr]['mvis1']
+          visual2="https://thingspeak.com/apps/matlab_visualizations/%s" % known_phones[addr]['mvis2']
+
+   if user == '':
+      print('No user identified. Please check Bluetooth and try again')
+      exit()
+
+   sense.show_message("Good Morning " + user)
+
+
 
 def getSense_data():
     temp=round(sense.get_temperature(),2)
@@ -235,15 +243,17 @@ def getFirebase_data():
     sbreaks = {}
     count = 1
     for item, value in result.items():
-        sbreaks.update({ count : {'start' : value['Start'], 'end' : value['End'] }})
-        count = count + 1
+        if value['Date'] == str(date.today()) and value['Name'] == user:
+           sbreaks.update({ count : {'start' : value['Start'], 'end' : value['End'] }})
+           count = count + 1
 
     result = firebase.get('/unscheduled', None)
     ubreaks = {}
     count = 1
     for item, value in result.items():
-        ubreaks.update({ count : {'start' : value['Start'], 'end' : value['End'] }})
-        count = count + 1
+        if value['Date'] == str(date.today()) and value['Name'] == user:
+           ubreaks.update({ count : {'start' : value['Start'], 'end' : value['End'] }})
+           count = count + 1
 
     breaks[1]['times'] = sbreaks
     breaks[2]['times'] = ubreaks
@@ -270,7 +280,7 @@ def toggle_device(device):
     return devices
 
 if __name__ == "__main__":
-    check_bluetooth()
-    #Run API on port 5000, set debug to true
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    setup_steps()
+    #Run API on port 5000, set debug to false
+    app.run(host='0.0.0.0', port=5000, debug=False)
 

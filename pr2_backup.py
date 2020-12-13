@@ -124,9 +124,20 @@ def day_action(action):
        end_time_mn = int(datetime.now().strftime("%M"))
        end_time_sc = int(datetime.now().strftime("%S"))
        end_time = str(round(end_time_hr + ((end_time_mn * 60 + end_time_sc) / 3600),2))
+       end_date = datetime.now().strftime("%Y-%M-%d")
+       end_date = end_date + "T00:00:00Z"
 
-       end_date = "2020-11-29T00:00:00Z"
-       conn = urlopen(baseURL + '&field1=%s&field2=%s&field3=%s&field4=%s&created_at="%s"' % (start_time, end_time, '50', '80', end_date))
+       sch_hr = int(total_scheduled_break_time.strftime("%H")) * 60
+       sch_mn = int(total_scheduled_break_time.strftime("%M"))
+       sch_sc = round((int(total_scheduled_break_time.strftime("%S")) / 60),0)
+       sch_tot = str(sch_hr + sch_mn + sch_sc)
+
+       unsch_hr = int(total_unscheduled_break_time.strftime("%H")) * 60
+       unsch_mn = int(total_unscheduled_break_time.strftime("%M"))
+       unsch_sc = round((int(total_unscheduled_break_time.strftime("%S")) / 60),0)
+       unsch_tot = str(unsch_hr + unsch_mn + unsch_sc)
+
+       conn = urlopen(baseURL + '&field1=%s&field2=%s&field3=%s&field4=%s&created_at="%s"' % (start_time, end_time, sch_tot, unsch_tot, end_date))
 
     templateData = {
         'devices' : devices,
