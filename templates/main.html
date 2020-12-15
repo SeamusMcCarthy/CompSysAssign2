@@ -79,7 +79,13 @@
               {% endfor %} ]);
         {% endfor %}
 
-        chart.draw(dataTable);
+        var options = {
+          hAxis: {
+           minValue: new Date(0,0,0,0,0,0),
+           maxValue: new Date(0,0,1,0,0,0)
+          }
+        };
+        chart.draw(dataTable, options);
       }
     </script>
 </head>
