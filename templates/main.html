@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
    <title>RPi Web Server</title>
-   <meta http-equiv="refresh" content="60">
+   <meta http-equiv="refresh" content="300">
    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -88,6 +88,14 @@
         chart.draw(dataTable, options);
       }
     </script>
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-app.js"></script>
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-database.js"></script>
+    <!-- import the webpage's javascript file -->
+    <script src="/static/script.js"></script>
 </head>
 
 <body>
@@ -165,6 +173,12 @@
          <div class="col-md-12" style="padding-top:10px;"><h3>Weekly Start/End Times</h3></div>
          <div class="col-md" style="margin: 0 auto;"><iframe width='500' height='300' style='border: 1px solid; margin: 0 auto; display:block;' src="{{ chart1 }}"></iframe></div>
          <div class="col-md" style="margin: 0 auto;"><iframe width='500' height='300' style='border: 1px solid; margin: 0 auto; display:block;' src="{{ chart2 }}"></iframe></div>
+      </div>
+      <div class="row border border-primary rounded" style="margin-bottom:10px; padding-bottom: 10px;">
+         <div class="col-md-12" style="padding-top:10px;padding-bottom:10px;">
+             <a href="/workday/pic" class="btn btn-lg btn-primary" role="button">Snapshot</a>         
+         </div>
+         <div class="col-md" style="margin: 0 auto;"><img id="photo" style="max-height:100%; max-width:100%;"/></div>
       </div>
    </div>
 </body>

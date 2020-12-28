@@ -13,6 +13,7 @@ import time
 import json
 import os
 import requests
+import subprocess
 
 # Setup Flask app
 app = Flask(__name__)
@@ -37,6 +38,7 @@ breaks = {
 # Setup and clear SenseHat
 sense = SenseHat()
 sense.clear()
+sense.low_light = True
 
 # Initialise working day and timestamps
 # Total break times using 1900-01-01 but this doesn't matter as I only want the time portion
@@ -74,8 +76,6 @@ def workday():
 def device_action(device, action):
     global devices
 
-#    getFirebase_data()
-#    env = getSense_data()
     device = int(device)
     if ((devices[device]['state'] == 'true' and action == 'off') 
     or (devices[device]['state'] == 'false' and action == 'on')):
@@ -97,8 +97,6 @@ def device_action(device, action):
 # Manage starting/ending the working day
 @app.route('/workday/day/<action>')
 def day_action(action):
-#    getFirebase_data()
-#    env = getSense_data()
     global start_time
     global day
     if day == 'false' and action == 'on':
@@ -141,6 +139,27 @@ def day_action(action):
         'day' : day
     }
     return render_template('main.html', **templateData)
+
+# Manage taking a picture
+@app.route('/workday/pic')
+def take_pic():
+    subprocess.Popen(["ssh", "%s" % "pi@192.168.68.117", "python3 pic.py"], shell=False)
+
+    getFirebase_data()
+    env = getSense_data()
+
+    templateData = {
+        'devices' : devices,
+        'temp' : env[0],
+        'humid' : env[1],
+        'chart1' : visual1,
+        'chart2' : visual2,
+        'breaks' : breaks,
+        'day' : day
+    }
+    return render_template('main.html', **templateData)
+
+
 
 # Manage starting/ending a break
 @app.route('/workday/break/<break_type>/<action>')
@@ -205,7 +224,21 @@ def setup_steps():
 
 # Setup Bluetooth discovery
    print('Performing Bluetooth scan...')
+   b = (0, 0, 255) #blue
+   y = (255, 255, 0) #yellow
+   btd = [
+     y,y,y,b,y,y,y,y,
+     y,y,y,b,b,y,y,y,
+     y,b,y,b,y,b,y,y,
+     y,y,b,b,b,y,y,y,
+     y,y,y,b,y,y,y,y,
+     y,y,b,b,b,y,y,y,
+     y,b,y,b,y,b,y,y,
+     y,y,y,b,b,y,y,y
+   ]
+   sense.set_pixels(btd)
    nearby_phones = discover_devices(lookup_names = True)
+   sense.clear()
 
 # List of MAC addresses and associated user details - name, Thingspeak channel, Matlab visualisations
    known_phones = {
@@ -229,7 +262,8 @@ def setup_steps():
       print('No user identified. Please check Bluetooth and try again')
       exit()
 
-   sense.show_message("Good Morning " + user)
+   sense.show_message("Hello " + user, text_colour=y, back_colour=b, scroll_speed=0.05)
+   sense.clear()
 
 
 
