@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+# Imports
 from flask import Flask, render_template, request
 from flask_cors import CORS
 from sense_hat import SenseHat
@@ -49,7 +50,6 @@ total_unscheduled_break_time = datetime.strptime("00:00:00","%H:%M:%S")
 
 # Initialize vars to be populated once user is known. Need them defined globally.
 user=""
-TSapi=""
 visual1=""
 visual2=""
 baseURL=""
@@ -143,6 +143,9 @@ def day_action(action):
 # Manage taking a picture
 @app.route('/workday/pic')
 def take_pic():
+# Submit the pic.py script on the other Pi
+# Note that as the Flask page auto-refreshes every 300 seconds, photos will be automatically taken every 5 minutes if
+# this was the last selected route.
     subprocess.Popen(["ssh", "%s" % "pi@192.168.68.117", "python3 pic.py"], shell=False)
 
     getFirebase_data()
@@ -159,9 +162,7 @@ def take_pic():
     }
     return render_template('main.html', **templateData)
 
-
-
-# Manage starting/ending a break
+# Manage starting or ending a break
 @app.route('/workday/break/<break_type>/<action>')
 def break_action(break_type, action):
     global user
@@ -170,8 +171,6 @@ def break_action(break_type, action):
     global total_unscheduled_break_time
 
     break_type = int(break_type)
-#    getFirebase_data()
-#    env = getSense_data()
 
     if breaks[break_type]['state'] == 'false' and action == 'on':
        breaks[break_type]['state'] = 'true'
@@ -218,7 +217,6 @@ def setup_steps():
    global baseURL
 
 # Setup PIR & wait for motion. 
-# Need the wait outside of the main loop or it will execute each time the template code changes
    pir = MotionSensor(4)
    pir.wait_for_motion()
 
@@ -226,6 +224,8 @@ def setup_steps():
    print('Performing Bluetooth scan...')
    b = (0, 0, 255) #blue
    y = (255, 255, 0) #yellow
+
+#Draw Bluetooth symbol on Sense Hat to let user know detection is running
    btd = [
      y,y,y,b,y,y,y,y,
      y,y,y,b,b,y,y,y,
@@ -260,18 +260,18 @@ def setup_steps():
 
    if user == '':
       print('No user identified. Please check Bluetooth and try again')
+      sense.show_message("No known user found!", text_colour=y, back_colour=b, scroll_speed=0.05)
       exit()
 
    sense.show_message("Hello " + user, text_colour=y, back_colour=b, scroll_speed=0.05)
    sense.clear()
-
-
 
 def getSense_data():
     temp=round(sense.get_temperature(),2)
     humid=round(sense.get_humidity(),2)
     return temp, humid
 
+# Get recorded break times for this user on the current day
 def getFirebase_data():
     result = firebase.get('/scheduled', None)
     sbreaks = {}
@@ -292,6 +292,7 @@ def getFirebase_data():
     breaks[1]['times'] = sbreaks
     breaks[2]['times'] = ubreaks
 
+# Toggle state of smart devices
 def toggle_device(device):
     device = int(device)
     if device == 1:
@@ -313,6 +314,7 @@ def toggle_device(device):
 
     return devices
 
+# Kick-off the main user identification and then start the app.
 if __name__ == "__main__":
     setup_steps()
     #Run API on port 5000, set debug to false
