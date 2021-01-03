@@ -261,6 +261,7 @@ def setup_steps():
    if user == '':
       print('No user identified. Please check Bluetooth and try again')
       sense.show_message("No known user found!", text_colour=y, back_colour=b, scroll_speed=0.05)
+      sense.clear()
       exit()
 
    sense.show_message("Hello " + user, text_colour=y, back_colour=b, scroll_speed=0.05)
