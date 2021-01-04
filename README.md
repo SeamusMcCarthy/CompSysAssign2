@@ -37,19 +37,23 @@ This document contains the list of hardware components used, where config change
 #### Instructions
 
 When the app is first started, the Sense Hat will display the Bluetooth image to inform the user that the Raspberry Pi is searching for devices.
+*Ensure Bluetooth is switched in order for your device to be detected*
 ![][BT]
 
 If no known device is found, an error message is displayed and the process stops.
-If a known device is identified, the user is greeted on the display and the web app is started at which point the user can proceed to
-192.168.xx.xx:5000/workday (where 192.168.xx.xx represents the IP address of the Raspberry Pi).
-
-This then will display the main page
+If a known device is identified, the user details are pulled from the user dictionary. The user is then greeted on the display and the web app is started at which point they can proceed to http://192.168.xx.xx:5000/workday (where 192.168.xx.xx represents the IP address of the Raspberry Pi) to reach the main page
 
 ![][MAIN]
 ![][SNAP]
 
-
-
+From here, the user can
+- start and end their working day using the button in the top-right corner
+- view the environmental readings of the office environment
+- toggle the state of the Smart Devices configured in the above dictionary
+- record the scheduled and unscheduled break times
+- view these user & day specific records in both table and timeline formats
+- view a graphical representation of their last 7 start/end times and total break durations
+- view/take snapshots of a remote part of the home via the camera attached to the 2nd Pi.
 
 [KD]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/KnownDevices.jpg "Known devices definition"
 [SD]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/SmartDevices.jpg "Smart devices definition"
