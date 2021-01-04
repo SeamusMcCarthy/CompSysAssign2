@@ -56,4 +56,4 @@ This will display the main page
 [CRON]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/crontab.jpg "Crontab entries"
 [PIRW]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/PIRWiring.jpg "PIR Wiring"
 [BT]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/BT.jpg "Bluetooth detection"
-[MAIN]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/main.jpg "Main Page"
+[MAIN]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/Main.jpg "Main Page"
