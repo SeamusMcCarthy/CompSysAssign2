@@ -1,9 +1,9 @@
 # Project Name: SHOM - Smart Home Office Management 
 #### Student Name: Seamus McCarthy   Student ID: 20091380
 
-### Intro
+### Contents
 
-This document contains the list of hardware components used, where config changes may need to be applied and instructions on how to use the SHOM application.
+This document contains the list of hardware components used, where config changes may need to be applied for new users/devices and instructions on how to use the SHOM application.
 
 #### Hardware used
 - Raspberry Pi (x 2)
@@ -21,6 +21,7 @@ This document contains the list of hardware components used, where config change
 
 - Smart Devices dictionary
 ![][SD]
+
 - Known Devices dictionary
 ![][KD]
 
@@ -31,7 +32,15 @@ This document contains the list of hardware components used, where config change
 ![][2ndPI]
 
 - PIR Wiring (for GPIO pin 4)
-![](https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/PIRWiring.jpg "PIR Wiring") {:height="50%" width="50%"}
+![][PIRW]
+
+#### Instructions
+
+When the app is first started, the Sense Hat will display the Bluetooth image to inform the user that the Raspberry Pi is searching for devices.
+![][BT]
+If a known device is identified, the user is greeted on the display
+
+
 
 [KD]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/KnownDevices.jpg "Known devices definition"
 [SD]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/SmartDevices.jpg "Smart devices definition"
@@ -39,3 +48,4 @@ This document contains the list of hardware components used, where config change
 [2ndPI]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/SecondPi.jpg "Call to 2nd Pi"
 [CRON]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/crontab.jpg "Crontab entries"
 [PIRW]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/PIRWiring.jpg "PIR Wiring" {:height="50%" width="50%"}
+[BT]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/BT.jpg "Bluetooth detection"
