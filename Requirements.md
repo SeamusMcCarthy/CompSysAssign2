@@ -11,6 +11,9 @@
 - TP-Link KL130 Smart Bulb
 
 #### Config requirements for running
+
+- Crontab entries (main proc, killproc, ping for keepalive)
+![alt text][CRON]
 - Smart Devices dictionary
 
 - Known Devices dictionary
@@ -20,6 +23,9 @@
 ![alt text][IFTTT]
 
 - Second Pi setup (requires SSH keys to be generated)
+![alt text][2ndPI]
 
 [KD]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/KnownDevices.jpg "Known devices definition"
 [IFTTT]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/IFTTT.jpg "IFTTT applet calling"
+[2ndPI]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/SecondPi.jpg "Call to 2nd Pi"
+[CRON]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/crontab.jpg "Crontab entries"
