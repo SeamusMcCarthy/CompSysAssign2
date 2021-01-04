@@ -31,7 +31,7 @@ This document contains the list of hardware components used, where config change
 ![][2ndPI]
 
 - PIR Wiring (for GPIO pin 4)
-![][PIRW]
+![](https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/PIRWiring.jpg "PIR Wiring") {:height="50%" width="50%"}
 
 [KD]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/KnownDevices.jpg "Known devices definition"
 [SD]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/SmartDevices.jpg "Smart devices definition"
