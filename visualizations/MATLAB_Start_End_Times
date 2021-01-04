@@ -1,0 +1,23 @@
+% Channel ID to read data from 
+readChannelID = 1212082; 
+% Start Time
+startTime = 1; 
+% End Time
+endTime = 2;
+
+% Channel Read API Key 
+% If your channel is private, then enter the read API key between the '' below: 
+readAPIKey = '2NQ8RFY6QDDTKA3O'; 
+
+[data, timeStamps ] = thingSpeakRead(readChannelID,'Fields',[startTime endTime], 'NumPoints',7,'ReadKey',readAPIKey);
+
+startTimeData = data(:, 1);
+endTimeData = data(:, 2);
+
+yyaxis left
+plot(timeStamps, startTimeData);
+ylabel('Start Time');
+yyaxis right
+plot(timeStamps, endTimeData);
+ylabel('End Time');
+title('Start & End Times (7 days)');
