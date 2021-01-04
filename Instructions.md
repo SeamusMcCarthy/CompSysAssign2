@@ -8,3 +8,7 @@
 - IFTTT setup
 - Second Pi setup
 
+Reference-style: 
+![alt text][logo]
+
+[logo]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/IFTTT.jpg "IFTTT definition"
