@@ -47,5 +47,5 @@ If a known device is identified, the user is greeted on the display
 [IFTTT]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/IFTTT.jpg "IFTTT applet calling"
 [2ndPI]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/SecondPi.jpg "Call to 2nd Pi"
 [CRON]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/crontab.jpg "Crontab entries"
-[PIRW]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/PIRWiring.jpg "PIR Wiring" {:height="50%" width="50%"}
+[PIRW]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/PIRWiring.jpg "PIR Wiring"
 [BT]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/BT.jpg "Bluetooth detection"
