@@ -17,23 +17,25 @@ This document contains the list of hardware components used, where config change
 #### Config requirements for running
 
 - Crontab entries (main proc, killproc, ping for keepalive)
-![alt text][CRON]
-- Smart Devices dictionary
+![][CRON]
 
+- Smart Devices dictionary
+![][SD]
 - Known Devices dictionary
-![alt text][KD]
+![][KD]
 
 - IFTTT setup
-![alt text][IFTTT]
+![][IFTTT]
 
 - Second Pi setup (requires SSH keys to be generated)
-![alt text][2ndPI]
+![][2ndPI]
 
 - PIR Wiring (for GPIO pin 4)
-![alt text][PIRW]
+![][PIRW]
 
 [KD]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/KnownDevices.jpg "Known devices definition"
+[SD]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/SmartDevices.jpg "Smart devices definition"
 [IFTTT]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/IFTTT.jpg "IFTTT applet calling"
 [2ndPI]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/SecondPi.jpg "Call to 2nd Pi"
 [CRON]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/crontab.jpg "Crontab entries"
-[PIRW]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/PIPWiring.jpg "PIR Wiring"
+[PIRW]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/PIRWiring.jpg "PIR Wiring"
