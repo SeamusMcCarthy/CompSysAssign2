@@ -1,6 +1,10 @@
 # Project Name: SHOM - Smart Home Office Management 
 #### Student Name: Seamus McCarthy   Student ID: 20091380
 
+### Intro
+
+This document contains the list of hardware components used, where config changes may need to be applied and instructions on how to use the SHOM application.
+
 #### Hardware used
 - Raspberry Pi (x 2)
 - Mini Black Hat Hack3r board (assembled)
@@ -25,7 +29,11 @@
 - Second Pi setup (requires SSH keys to be generated)
 ![alt text][2ndPI]
 
+- PIR Wiring (for GPIO pin 4)
+![alt text][PIRW]
+
 [KD]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/KnownDevices.jpg "Known devices definition"
 [IFTTT]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/IFTTT.jpg "IFTTT applet calling"
 [2ndPI]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/SecondPi.jpg "Call to 2nd Pi"
 [CRON]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/crontab.jpg "Crontab entries"
+[PIRW]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/PIPWiring.jpg "PIR Wiring"
