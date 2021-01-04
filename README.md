@@ -38,7 +38,14 @@ This document contains the list of hardware components used, where config change
 
 When the app is first started, the Sense Hat will display the Bluetooth image to inform the user that the Raspberry Pi is searching for devices.
 ![][BT]
-If a known device is identified, the user is greeted on the display
+
+If no known device is found, an error message is displayed and the process stops.
+If a known device is identified, the user is greeted on the display and the web app is started at which point the user can proceed to
+192.168.xx.xx:5000/workday (where 192.168.xx.xx represents the IP address of the Raspberry Pi)
+
+This will display the main page
+![][MAIN]
+
 
 
 
@@ -49,3 +56,4 @@ If a known device is identified, the user is greeted on the display
 [CRON]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/crontab.jpg "Crontab entries"
 [PIRW]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/PIRWiring.jpg "PIR Wiring"
 [BT]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/BT.jpg "Bluetooth detection"
+[MAIN]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/main.jpg "Main Page"
