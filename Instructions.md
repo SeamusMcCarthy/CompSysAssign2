@@ -11,4 +11,4 @@
 Reference-style: 
 ![alt text][logo]
 
-[logo]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/IFTTT.jpg "IFTTT definition"
+[logo]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/KnownDevices.jpg "Known devices definition"
