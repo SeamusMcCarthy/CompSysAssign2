@@ -38,6 +38,7 @@ This document contains the list of hardware components used, where config change
 
 When the app is first started, the Sense Hat will display the Bluetooth image to inform the user that the Raspberry Pi is searching for devices.
 *Ensure Bluetooth is switched in order for your device to be detected*
+
 ![][BT]
 
 If no known device is found, an error message is displayed and the process stops.
@@ -54,6 +55,8 @@ From here, the user can
 - view these user & day specific records in both table and timeline formats
 - view a graphical representation of their last 7 start/end times and total break durations
 - view/take snapshots of a remote part of the home via the camera attached to the 2nd Pi.
+
+Once the working day is complete, the user must end their day using the button in the top-right corner. This facilitates the posting of the statistical data to the Thingspeak channel defined in the user dictionary.
 
 [KD]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/KnownDevices.jpg "Known devices definition"
 [SD]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/SmartDevices.jpg "Smart devices definition"
