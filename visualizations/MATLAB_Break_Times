@@ -1,0 +1,23 @@
+% Channel ID to read data from 
+readChannelID = 1212082; 
+% Start Time
+scheduled = 3; 
+% End Time
+unscheduled = 4;
+
+% Channel Read API Key 
+% If your channel is private, then enter the read API key between the '' below: 
+readAPIKey = '2NQ8RFY6QDDTKA3O'; 
+
+[data, timeStamps ] = thingSpeakRead(readChannelID,'Fields',[scheduled unscheduled], 'NumPoints',7,'ReadKey',readAPIKey);
+
+scheduledData = data(:, 1);
+unscheduledData = data(:, 2);
+
+yyaxis left
+plot(timeStamps, scheduledData);
+ylabel('Time on scheduled breaks');
+yyaxis right
+plot(timeStamps, unscheduledData);
+ylabel('Time on unscheduled breaks');
+title('Total Break Durations (7 days)');
