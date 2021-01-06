@@ -64,5 +64,5 @@ Once the working day is complete, the user must end their day using the button i
 [CRON]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/crontab2.jpg "Crontab entries"
 [PIRW]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/PIRWiring.jpg "PIR Wiring"
 [BT]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/BT.jpg "Bluetooth detection"
-[MAIN]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/Main2.jpg "Main Page"
+[MAIN]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/Main3.jpg "Main Page"
 [SNAP]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/Snapshot.jpg "Snapshot"
