@@ -45,7 +45,6 @@ If no known device is found, an error message is displayed and the process stops
 If a known device is identified, the user details are pulled from the user dictionary. The user is then greeted on the display and the web app is started at which point they can proceed to http://192.168.xx.xx:5000/workday (where 192.168.xx.xx represents the IP address of the Raspberry Pi) to reach the main page
 
 ![][MAIN]
-![][SNAP]
 
 From here, the user can
 - start and end their working day using the button in the top-right corner
@@ -65,5 +64,5 @@ Once the working day is complete, the user must end their day using the button i
 [CRON]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/crontab2.jpg "Crontab entries"
 [PIRW]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/PIRWiring.jpg "PIR Wiring"
 [BT]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/BT.jpg "Bluetooth detection"
-[MAIN]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/Main.jpg "Main Page"
+[MAIN]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/Main2.jpg "Main Page"
 [SNAP]: https://github.com/SeamusMcCarthy/CompSysAssign2/blob/master/doc_images/Snapshot.jpg "Snapshot"
