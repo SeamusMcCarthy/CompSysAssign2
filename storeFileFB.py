@@ -4,8 +4,8 @@ import os
 
 cred=credentials.Certificate('./serviceAccountKey.json')
 firebase_admin.initialize_app(cred, {
-    'storageBucket': 'sensepi-e9029.appspot.com',
-    'databaseURL': 'https://sensepi-e9029.firebaseio.com/'
+    'storageBucket': 'sensepi-xxxxx.appspot.com',
+    'databaseURL': 'https://sensepi-xxxxx.firebaseio.com/'
 })
 
 bucket = storage.bucket()
