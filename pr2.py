@@ -21,13 +21,13 @@ app = Flask(__name__)
 CORS(app)
 
 # Firebase DB details
-firebase = firebase.FirebaseApplication('https://compsys2020-154671.firebaseio.com/', None)
+firebase = firebase.FirebaseApplication('https://compsys2020-xxxxxx.firebaseio.com/', None)
 
 # Create a dictionary for smart devices
 devices = {
-   1 : {'name' : 'Dehumidifier', 'ip' : '192.168.68.103', 'state' : 'false', 'type' : 'plug'},
-   2 : {'name' : 'Room Heater', 'ip' : '192.168.68.114', 'state' : 'false', 'type' : 'plug'},
-   3 : {'name' : 'Do Not Disturb', 'ip' : '192.168.68.118', 'state' : 'false', 'type' : 'bulb'}
+   1 : {'name' : 'Dehumidifier', 'ip' : '192.168.68.xx3', 'state' : 'false', 'type' : 'plug'},
+   2 : {'name' : 'Room Heater', 'ip' : '192.168.68.xx4', 'state' : 'false', 'type' : 'plug'},
+   3 : {'name' : 'Do Not Disturb', 'ip' : '192.168.68.xx8', 'state' : 'false', 'type' : 'bulb'}
 }
 
 # Create a dictionary for breaks
@@ -146,7 +146,7 @@ def take_pic():
 # Submit the pic.py script on the other Pi
 # Note that as the Flask page auto-refreshes every 300 seconds, photos will be automatically taken every 5 minutes if
 # this was the last selected route.
-    subprocess.Popen(["ssh", "%s" % "pi@192.168.68.117", "python3 pic.py"], shell=False)
+    subprocess.Popen(["ssh", "%s" % "pi@192.168.68.xx7", "python3 pic.py"], shell=False)
 
     getFirebase_data()
     env = getSense_data()
@@ -242,8 +242,8 @@ def setup_steps():
 
 # List of MAC addresses and associated user details - name, Thingspeak channel, Matlab visualisations
    known_phones = {
-     '88:BD:45:06:34:87': { 'uname' : 'Seamus', 'api' : '0GG6PVV1IBH096HV', 'mvis1' : '374478', 'mvis2' : '374485'},
-     '12:23:34:45:56:67': { 'uname' : 'Tracy', 'api' : '0GG6PVV1IBH096HA', 'mvis1' : '374477', 'mvis2' : '374486'}
+     '88:BD:45:06:xx:xx': { 'uname' : 'Seamus', 'api' : 'xxxxxxxxxxxxxxx1', 'mvis1' : '37xxxx', 'mvis2' : '37xxxx'},
+     '12:23:34:45:xx:xx': { 'uname' : 'Tracy', 'api' : 'xxxxxxxxxxxxxxx2', 'mvis1' : '37xxxx', 'mvis2' : '37xxxx'}
    }
 
    phones = []
@@ -297,15 +297,15 @@ def getFirebase_data():
 def toggle_device(device):
     device = int(device)
     if device == 1:
-       url = 'https://maker.ifttt.com/trigger/ToggleOffice1/with/key/bTQ6D-WnYUA6ZpK2vQ_95m'
+       url = 'https://maker.ifttt.com/trigger/ToggleOffice1/with/key/xxxxx-xxxxxxxxxxxx_xxx'
        x = requests.post(url)
 
     if device == 2:
-       url = 'https://maker.ifttt.com/trigger/ToggleOffice3/with/key/bTQ6D-WnYUA6ZpK2vQ_95m'
+       url = 'https://maker.ifttt.com/trigger/ToggleOffice3/with/key/xxxxx-xxxxxxxxxxxx_xxx'
        x = requests.post(url)
 
     if device == 3:
-       url = 'https://maker.ifttt.com/trigger/ToggleLight/with/key/bTQ6D-WnYUA6ZpK2vQ_95m'
+       url = 'https://maker.ifttt.com/trigger/ToggleLight/with/key/xxxxx-xxxxxxxxxxxx_xxx'
        x = requests.post(url)
 
     if devices[device]['state'] == 'true':
